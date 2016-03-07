@@ -18,6 +18,7 @@ gem 'therubyracer', platforms: :ruby
 gem 'omniauth-twitter'
 gem 'twitter'
 gem 'threasy'
+gem 'faraday'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -47,6 +48,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'quiet_assets'
+  gem 'vcr'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

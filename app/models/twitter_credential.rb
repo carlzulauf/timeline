@@ -3,6 +3,7 @@ class TwitterCredential < ApplicationRecord
   has_one :user, through: :authentication
 
   has_many :authorizations, foreign_key: :credential_id
+  has_many :tweets, foreign_key: :credential_id
 
   validates :token, :secret, :twitter_id, presence: true
 
@@ -26,7 +27,6 @@ class TwitterCredential < ApplicationRecord
 
   def streaming_client
     Twitter::Streaming::Client.new(&setup_client)
-
   end
 
   def setup_client

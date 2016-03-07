@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160307033610) do
+ActiveRecord::Schema.define(version: 20160307064105) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,17 @@ ActiveRecord::Schema.define(version: 20160307033610) do
   add_index "authorizations", ["credential_id"], name: "index_authorizations_on_credential_id", using: :btree
   add_index "authorizations", ["user_id"], name: "index_authorizations_on_user_id", using: :btree
 
+  create_table "tweets", force: :cascade do |t|
+    t.integer  "credential_id"
+    t.string   "tweet_id"
+    t.json     "info"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  add_index "tweets", ["credential_id"], name: "index_tweets_on_credential_id", using: :btree
+  add_index "tweets", ["tweet_id"], name: "index_tweets_on_tweet_id", using: :btree
+
   create_table "twitter_credentials", force: :cascade do |t|
     t.string   "twitter_id"
     t.string   "twitter_nickname"
@@ -44,6 +55,7 @@ ActiveRecord::Schema.define(version: 20160307033610) do
     t.json     "auth_hash"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.string   "last_tweet_id"
   end
 
   add_index "twitter_credentials", ["twitter_id"], name: "index_twitter_credentials_on_twitter_id", using: :btree
