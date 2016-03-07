@@ -1,0 +1,5 @@
+<% if current_user %>
+  <p>Authenticated as <%= current_user.key %></p>
+<% else %>
+  <p><%= link_to "Sign-in with Twitter", "/auth/twitter" %></p>
+<% end %>

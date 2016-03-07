@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+carl:
+  user: carl
+  credential: existensil
+
+carl_ruby:
+  user: carl
+  credential: omaha_ruby
+
+# two:
+#   user: two
+#   credential: two
