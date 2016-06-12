@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id         :integer          not null, primary key
+#  key        :string
+#  name       :string
+#  email      :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
 class User < ApplicationRecord
   has_many :authentications
   has_many :authorizations

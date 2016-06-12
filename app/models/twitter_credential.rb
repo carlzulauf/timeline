@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: twitter_credentials
+#
+#  id               :integer          not null, primary key
+#  twitter_id       :string
+#  twitter_nickname :string
+#  token            :string
+#  secret           :string
+#  auth_hash        :json
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  last_tweet_id    :string
+#
+
 class TwitterCredential < ApplicationRecord
   has_one :authentication, foreign_key: :credential_id
   has_one :user, through: :authentication
