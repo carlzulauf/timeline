@@ -7,11 +7,15 @@ class TimelineFetcher
   end
 
   def perform
-    @results    = []
-    client.home_timeline(timeline_options).each do |native|
-      tweet = credential.tweets.from_native_tweet(native)
-      @last ||= tweet
-      @results << tweet
+    @results  = []
+    timeline  = client.home_timeline(timeline_options)
+    missing   = credential.tweets.missing_tweet_ids(timeline.map(&:id))
+    timeline.each do |native|
+      if missing.member?(native.id)
+        tweet = credential.tweets.from_native_tweet(native)
+        @last ||= tweet
+        @results << tweet
+      end
     end
     credential.update(last_tweet_id: @last.tweet_id) if @last
     self

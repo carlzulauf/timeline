@@ -15,4 +15,12 @@ class User < ApplicationRecord
   has_many :authorizations
 
   has_many :credentials, through: :authorizations
+
+  def stream_tweets!(on = true)
+    if on
+      User::StreamOn.new(self).perform
+    else
+      User::StreamOff.new(self).perform
+    end
+  end
 end

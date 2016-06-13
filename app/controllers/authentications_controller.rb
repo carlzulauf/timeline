@@ -12,6 +12,7 @@ class AuthenticationsController < ApplicationController
   end
 
   def logout
+    current_user.stream_tweets! false
     session.destroy
     cookies.clear
     redirect_to root_url

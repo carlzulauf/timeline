@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rails', '>= 5.0.0.beta3', '< 5.1'
 gem 'pg', '~> 0.18'
+gem 'redis'
+gem 'redis-namespace'
 gem 'puma'
 
 gem 'haml-rails'
