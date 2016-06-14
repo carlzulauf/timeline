@@ -18,9 +18,7 @@ class Tweet < ApplicationRecord
   end
 
   def self.from_native_if_unique(native)
-    unless where(tweet_id: native.id).exists?
-      from_native(native) unless existing
-    end
+    from_native(native) unless where(tweet_id: native.id).exists?
   end
 
   def self.missing_tweet_ids(ids)

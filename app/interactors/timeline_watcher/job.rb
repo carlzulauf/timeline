@@ -21,7 +21,9 @@ class TimelineWatcher::Job < Struct.new(:worker, :credential)
 
   def stream_tweets(timeout: )
     logger.info "Streaming tweets for #{nickname}"
-    TimelineStreamer.new(credential).perform_with_timeout(timeout)
+    TimelineStreamer.new(credential).perform_with_timeout(timeout) do |tweet|
+      logger.info "Received tweet for #{nickname} via streaming: #{tweet.tweet_id}"
+    end
   end
 
   def nickname

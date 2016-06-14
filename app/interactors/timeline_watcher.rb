@@ -5,10 +5,11 @@ class TimelineWatcher
     Redis::Namespace.new(namespace, url: redis_config[:url])
   end
 
-  attr_accessor :logger, :pool, :thread
+  attr_accessor :options, :logger, :pool, :thread
 
-  def initialize
-    @logger = Logger.new("log/watcher.log")
+  def initialize(**options)
+    @options = options
+    @logger = options.fetch(:logger) { Logger.new("log/watcher.log") }
     @pool = {}
   end
 
@@ -17,6 +18,13 @@ class TimelineWatcher
     prune_stale_users
     watch_users
     self
+  end
+
+  def perform_in_foreground
+    loop do
+      perform
+      sleep 1.hour
+    end
   end
 
   def stop
