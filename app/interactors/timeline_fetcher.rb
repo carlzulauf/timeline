@@ -12,7 +12,7 @@ class TimelineFetcher
     missing   = credential.tweets.missing_tweet_ids(timeline.map(&:id))
     timeline.each do |native|
       if missing.member?(native.id)
-        tweet = credential.tweets.from_native_tweet(native)
+        tweet = credential.tweet_from_native(native)
         @last ||= tweet
         @results << tweet
       end

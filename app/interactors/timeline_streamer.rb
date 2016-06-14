@@ -10,7 +10,7 @@ class TimelineStreamer
     client.user do |update|
       case update
       when Twitter::Tweet
-        tweet = credential.tweets.from_native_tweet_if_unique(update)
+        tweet = credential.tweet_from_native_if_unique(update)
         yield tweet if block_given? && tweet
       end
     end

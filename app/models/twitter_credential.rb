@@ -54,6 +54,20 @@ class TwitterCredential < ApplicationRecord
     }
   end
 
+  def tweet_from_native_if_unique(native)
+    tweets.from_native_if_unique(native).tap {|t| last_tweet! t }
+  end
+
+  def tweet_from_native(native)
+    tweets.from_native(native)
+  end
+
+  def last_tweet!(t)
+    if last_tweet_id.nil? || t.tweet_id > last_tweet_id
+      update(last_tweet_id: t.tweet_id)
+    end
+  end
+
   def self.from_omniauth(auth_hash)
     return unless auth_hash["uid"]
     find_or_initialize_by(twitter_id: auth_hash["uid"]).tap do |c|

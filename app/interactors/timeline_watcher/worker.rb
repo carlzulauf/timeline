@@ -22,8 +22,12 @@ class TimelineWatcher::Worker < Struct.new(:watcher, :credential)
     self
   end
 
+  def stop
+    thread.kill if running?
+  end
+
   def running?
-    @thread.present?
+    thread.present? && thread.alive?
   end
 
   def run_job

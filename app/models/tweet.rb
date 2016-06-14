@@ -11,15 +11,16 @@
 #
 
 class Tweet < ApplicationRecord
-  belongs_to :credential, class_name: "TwitterCredential"
+  belongs_to :credential, class_name: "TwitterCredential", required: false
 
-  def self.from_native_tweet(native)
+  def self.from_native(native)
     create(info: native.to_h, tweet_id: native.id)
   end
 
-  def self.from_native_tweet_if_unique(native)
-    existing = find_by(tweet_id: native.id)
-    from_native_tweet(native) unless existing
+  def self.from_native_if_unique(native)
+    unless where(tweet_id: native.id).exists?
+      from_native(native) unless existing
+    end
   end
 
   def self.missing_tweet_ids(ids)
