@@ -13,13 +13,18 @@ class TimelineWatcher::Worker < Struct.new(:watcher, :credential)
           run_job
           worker_ending
         rescue => e
-          errors << e
+          add_error(e)
         end
       end
     rescue => e
-      errors << e
+      add_error(e)
     end
     self
+  end
+
+  def add_error
+    errors << e
+    logger.error "Worker encountered error: #{e.inspect}\n#{e.backtrace.join("\n")}"
   end
 
   def stop
