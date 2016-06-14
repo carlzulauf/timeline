@@ -11,7 +11,9 @@ class TimelineWatcher::Job < Struct.new(:worker, :credential)
   end
 
   def stale?
-    last_stream = Time.at(redis.zscore :users, credential.user.id)
+    last_stream_at = redis.zscore :users, credential.user.id
+    return true if last_stream_at.nil?
+    Time.now.to_f - last_stream_at > 2.hours
   end
 
   def fetch_latest_tweets
@@ -23,6 +25,7 @@ class TimelineWatcher::Job < Struct.new(:worker, :credential)
     logger.info "Streaming tweets for #{nickname}"
     TimelineStreamer.new(credential).perform_with_timeout(timeout) do |tweet|
       logger.info "Received tweet for #{nickname} via streaming: #{tweet.tweet_id}"
+      ActionCable.server.broadcast "tweets:#{tweet.credential_id}", tweet
     end
   end
 

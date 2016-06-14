@@ -5,11 +5,11 @@ class TimelineWatcher
     Redis::Namespace.new(namespace, url: redis_config[:url])
   end
 
-  attr_accessor :options, :logger, :pool, :thread
+  attr_accessor :options, :logger, :pool
 
   def initialize(**options)
     @options = options
-    @logger = options.fetch(:logger) { Logger.new("log/watcher.log") }
+    @logger = options.fetch(:logger) { Rails.logger }
     @pool = {}
   end
 
@@ -21,9 +21,38 @@ class TimelineWatcher
   end
 
   def perform_in_foreground
-    loop do
-      perform
-      sleep 1.hour
+    puts "Starting TimelineWatcher..."
+    perform_in_background
+    logger.info "Moving background watcher to foreground"
+
+    logger.info "Joining on watcher thread"
+    @watcher_thread.join
+
+    logger.info "Joining on listener thread"
+    @listener_thread.join
+
+    self
+  end
+
+  def perform_in_background
+    logger.info "Starting timeline watcher in background"
+    @watcher_thread = Thread.new do
+      loop do
+        prune_stale_users
+        watch_users
+        sleep 1.hour
+      end
+    end
+    @listener_thread = Thread.new { listen_for_users }
+    self
+  end
+
+  def listen_for_users
+    redis.subscribe(:stream_users) do |on|
+      on.message do |ch, user_id|
+        action, user_id = ActiveSupport::JSON.decode(message)
+        User.find(user_id).credentials.each {|c| watch_credential c }
+      end
     end
   end
 
@@ -31,10 +60,6 @@ class TimelineWatcher
     pool.each {|_,worker| worker.stop }
     pool.clear
     self
-  end
-
-  def watched_user_ids
-    redis.zrevrange(:users, 0, -1)
   end
 
   def prune_stale_users
@@ -46,7 +71,9 @@ class TimelineWatcher
     if user_ids.any?
       credential_ids = Authorization.where(user_id: user_ids).pluck(:credential_id).to_set
       pool.delete_if do |key, worker|
-        unless credential_ids.member?(key)
+        if !worker.running?
+          true
+        elsif !credential_ids.member?(key)
           worker.stop
           true
         end
@@ -54,16 +81,22 @@ class TimelineWatcher
     end
   end
 
+  def watched_user_ids
+    redis.zrevrange(:users, 0, -1)
+  end
+
   def watch_users
     user_ids = watched_user_ids
     logger.info "Watching users: #{user_ids.join(', ')}"
     User.where(id: user_ids).each do |user|
-      user.credentials.each do |credential|
-        unless pool[credential.id]
-          logger.info "Adding worker to pool for #{credential.twitter_nickname}"
-          pool[credential.id] = TimelineWatcher::Worker.new(self, credential).perform
-        end
-      end
+      user.credentials.each {|c| watch_credential c }
+    end
+  end
+
+  def watch_credential(c)
+    unless pool[c.id]
+      logger.info "Adding worker to pool for #{c.twitter_nickname}"
+      pool[c.id] = TimelineWatcher::Worker.new(self, c).perform
     end
   end
 
