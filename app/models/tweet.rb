@@ -13,6 +13,14 @@
 class Tweet < ApplicationRecord
   belongs_to :credential, class_name: "TwitterCredential", required: false
 
+  def self.newest_first
+    order(tweet_id: :desc)
+  end
+
+  def self.latest(limit = 100)
+    newest_first.limit(limit)
+  end
+
   def self.from_native(native)
     create(info: native.to_h, tweet_id: native.id)
   end
