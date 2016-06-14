@@ -1,8 +1,72 @@
+$tweet-row-height: 200px
+
+@include animate-keyframe(showCurrentRow)
+  0%
+    opacity: 0
+    min-height: 0
+    height: 0
+  100%
+    min-height: $tweet-row-height
+    height: $tweet-row-height
+    opacity: 1
+
+@include animate-keyframe(fadeCurrentRow)
+  0%
+    min-height: $tweet-row-height
+  100%
+    min-height: 0
+
+@include animate-keyframe(showTweet)
+  // 0%
+  //   flex-grow: 0.0001
+  //   opacity: 0
+  //   max-height: $tweet-row-height
+  //   min-width: 0
+  //   max-width: 0
+  //   width: 0
+  0%
+    opacity: 0
+    max-width: 250px
+  50%
+    max-width: 480px
+    opacity: 0
+  100%
+    max-width: 480px
+    opactiy: 1
+
 .tweets
   .tweet-row
     display: flex
+    &.in
+      min-height: $tweet-row-height
+      height: auto
+      opacity: 1
+
+    &.out
+      min-height: 0
+      height: auto
+      @include animate-prefixer(animation-name, fadeCurrentRow)
+      @include animate-prefixer(animation-duration, 1s)
+
+  .current-tweet-row
+    height: 0
+    opacity: 0
+
+    &.in
+      @include animate-prefixer(animation-name, showCurrentRow)
+      @include animate-prefixer(animation-duration, 1s)
 
   .tweet
     flex-grow: 1
-    min-width: 250px
     margin: 0px 10px
+    overflow: hidden
+    width: auto
+    min-width: 250px
+    max-width: 480px
+    max-height: $tweet-row-height
+  .in .tweet
+    @include animate-prefixer(animation-name, showTweet)
+    @include animate-prefixer(animation-duration, 1s)
+
+    &.out
+      opacity: 0
