@@ -13,6 +13,10 @@
 class Tweet < ApplicationRecord
   belongs_to :credential, class_name: "TwitterCredential", required: false
 
+  def text
+    info.dig("text")
+  end
+
   def self.newest_first
     order(tweet_id: :desc)
   end

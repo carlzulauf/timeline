@@ -1,4 +1,4 @@
-class User::StreamOn < Struct.new(:user)
+class User::StreamOff < Struct.new(:user)
   def perform
     redis.zrem :users, user.id
   end

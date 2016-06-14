@@ -8,7 +8,7 @@ class AuthenticationsController < ApplicationController
     else
       set_current_user credential.create_authentication_with_new_user.user
     end
-    redirect_to root_url
+    redirect_to credential
   end
 
   def logout

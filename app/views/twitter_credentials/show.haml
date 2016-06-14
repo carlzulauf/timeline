@@ -1,0 +1,9 @@
+= js_global :tweets, @tweets
+.tweets
+
+%script#tweet-template{type: "template/mustache"}
+  .tweet
+    .panel.panel-default
+      .panel-heading
+        .panel-title {{author}}
+      .panel-body {{content}}

@@ -1,5 +1,7 @@
 class PagesController < ApplicationController
   def index
-    current_user.stream_tweets! if logged_in?
+    if logged_in?
+      current_user.stream_tweets!
+    end
   end
 end
