@@ -29,16 +29,16 @@ class @Timeline
     @tweets.pop
     $tweet = $(Mustache.render(@template, tweet.data()))
     $row = @currentRow()
-    $holder = $($row.find(".tweet")[@columns - @current_column - 1])
+    # $holder = $($row.find(".tweet")[@columns - @current_column - 1])
 
     $stale_row = null
-    if @$.height() > ($(window).height() * 1.5)
+    if @$.find(".tweet-row").length * 150 > @height * 2
       $stale_row = @$.find(".tweet-row:last-child")
 
     requestAnimationFrame =>
-      # $row.prepend($tweet)
-      window.last_holder = $holder
-      $holder.replaceWith($tweet)
+      $row.prepend($tweet)
+      # window.last_holder = $holder
+      # $holder.replaceWith($tweet)
       @current_column++
 
       if @current_column == 1
@@ -60,12 +60,13 @@ class @Timeline
   currentRow: ->
     unless @$current_row
       @$current_row = @$.find(".current-tweet-row")
-      for col in [0...@columns]
-        @$current_row.append('<div class="tweet out"></div>')
+      # for col in [0...@columns]
+      #   @$current_row.append('<div class="tweet out"></div>')
     @$current_row
 
   measure: ->
     @width = @$.width()
+    @height = $(window).height()
     @columns = Math.max(1, Math.floor(@width / @tweet_width))
     console.log [@width, @columns]
 

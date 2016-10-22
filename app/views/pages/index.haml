@@ -1,0 +1,12 @@
+.container
+  .row
+    .col-xs-12
+      .jumbotron
+        - if logged_in?
+          %h1 Available Timelines
+          %p
+            - current_user.credentials.each do |credential|
+              %a.btn.btn-primary{href: url_for(credential)}= credential.nickname
+        - else
+          %h1 Timeline
+          %p Watch your timeline float by. Great for non-interactive displays.

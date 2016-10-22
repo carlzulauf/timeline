@@ -36,6 +36,10 @@ class TwitterCredential < ApplicationRecord
     auth_hash.dig("info", "email")
   end
 
+  def nickname
+    twitter_nickname
+  end
+
   def rest_client
     Twitter::REST::Client.new(&setup_client)
   end
